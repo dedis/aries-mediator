@@ -1,0 +1,5 @@
+﻿{
+  "agentPublicEndpoint": "",
+  "genesisFilePath": "/tmp/genesis_txt",
+  "walletPath": "/tmp/.indy_wallet"
+}
