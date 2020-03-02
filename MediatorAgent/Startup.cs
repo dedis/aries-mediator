@@ -28,9 +28,7 @@ namespace MediatorAgent
             {
                 builder.RegisterMediatorAgent<CustomMediatorAgent>(options =>
                 {
-                    options.EndpointUri = _configuration.GetValue<string>("agentPublicEndpoint");
-                    options.GenesisFilename = _configuration.GetValue<string>("genesisFilePath");
-
+		            options.EndpointUri = _configuration.GetValue<string>("agentPublicEndpoint");
                     options.WalletConfiguration.StorageConfiguration = new Hyperledger.Aries.Storage.WalletConfiguration.WalletStorageConfiguration
                     {
                         Path = _configuration.GetValue<string>("walletPath")
