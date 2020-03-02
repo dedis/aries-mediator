@@ -14,5 +14,9 @@ instance. User state should be managed in a more robust way.
 
 # License
 
+This software is derived from [the
+MediatorAgentService](https://github.com/hyperledger/aries-framework-dotnet/tree/master/samples/routing/MediatorAgentService)
+sample. It carries the same license.
+
 [Apache License Version 2.0](https://github.com/hyperledger/aries-cloudagent-python/blob/master/LICENSE)
 
