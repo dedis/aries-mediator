@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -33,6 +29,8 @@ namespace MediatorAgent
                     {
                         Path = _configuration.GetValue<string>("walletPath")
                     };
+                    var url = new System.Uri(options.EndpointUri);
+                    options.WalletConfiguration.Id = url.Host;
                 });
                 services.AddHostedService<ForwardMessageSubscriber>();
                 services.AddSignalR();
