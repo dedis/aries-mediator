@@ -12,9 +12,10 @@ namespace MediatorAgent
             try
             {
                 CreateHostBuilder(args).Build().Run();
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
-                Console.WriteLine("Server shutting down: ", e);
+                Console.WriteLine("Exception {0}", e.Message);
             }
         }
 
