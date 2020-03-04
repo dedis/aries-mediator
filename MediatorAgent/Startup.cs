@@ -22,16 +22,16 @@ namespace MediatorAgent
         {
             services.AddAriesFramework(builder =>
             {
-                builder.RegisterMediatorAgent<CustomMediatorAgent>(options =>
-                {
-		            options.EndpointUri = _configuration.GetValue<string>("agentPublicEndpoint");
-                    options.WalletConfiguration.StorageConfiguration = new Hyperledger.Aries.Storage.WalletConfiguration.WalletStorageConfiguration
-                    {
-                        Path = _configuration.GetValue<string>("walletPath")
-                    };
-                    var url = new System.Uri(options.EndpointUri);
-                    options.WalletConfiguration.Id = url.Host;
-                });
+                _ = builder.RegisterMediatorAgent<CustomMediatorAgent>(options =>
+                  {
+                      options.EndpointUri = _configuration.GetValue<string>("agentPublicEndpoint");
+                      options.WalletConfiguration.StorageConfiguration = new Hyperledger.Aries.Storage.WalletConfiguration.WalletStorageConfiguration
+                      {
+                          Path = _configuration.GetValue<string>("walletPath")
+                      };
+                      var url = new System.Uri(options.EndpointUri);
+                      options.WalletConfiguration.Id = url.Host;
+                  });
                 services.AddHostedService<ForwardMessageSubscriber>();
                 services.AddSignalR();
             });
