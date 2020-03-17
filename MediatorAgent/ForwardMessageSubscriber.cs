@@ -20,9 +20,11 @@ namespace MediatorAgent
         private readonly IWalletRecordService _walletRecordService;
         private readonly IConnectionService _connectionService;
         private readonly IHubContext<MediatorHub> _hubContext;
+        private readonly MessageQueue<InboxItemRecord> _messageQueue;
 
-        public ForwardMessageSubscriber(IEventAggregator eventAggregator, IAgentProvider agentProvider, IWalletService walletService, IWalletRecordService walletRecordService, IConnectionService connectionService, IHubContext<MediatorHub> hubContext)
+        public ForwardMessageSubscriber(MessageQueue<InboxItemRecord> messageQueue, IEventAggregator eventAggregator, IAgentProvider agentProvider, IWalletService walletService, IWalletRecordService walletRecordService, IConnectionService connectionService, IHubContext<MediatorHub> hubContext)
         {
+            _messageQueue = messageQueue;
             observable = eventAggregator.GetEventByType<InboxItemEvent>();
             _agentProvider = agentProvider;
             _walletService = walletService;
@@ -35,38 +37,17 @@ namespace MediatorAgent
         {
             disposable = observable.Subscribe(async (e) =>
             {
+                
                 var agentContext = await _agentProvider.GetContextAsync();
 
                 var record = await _walletRecordService.GetAsync<InboxRecord>(
-                    wallet: agentContext.Wallet,
+                    agentContext.Wallet,
                     e.InboxId
                 );
                 var edgeWallet = await _walletService.GetWalletAsync(record.WalletConfiguration, record.WalletCredentials);
 
                 var item = await _walletRecordService.GetAsync<InboxItemRecord>(edgeWallet, e.ItemId);
-                var connection = await _connectionService.ListAsync(agentContext, SearchQuery.Equal("InboxId", e.InboxId));
-                // Should only get one connection-id since connection and inbox have 1:1 relation
-                if (connection.Count == 1)
-                {
-                    var did = connection[0].TheirDid;
-                    if (UserManager.didConnectionMap.ContainsKey(did))
-                    {
-                        // User is connected
-                        System.Diagnostics.Debug.WriteLine("User is connected, sending message");
-                        var connectionId = UserManager.didConnectionMap[did];
-                        await _hubContext.Clients.Client(connectionId).SendAsync("HandleMessage", item.ItemData);
-                    }
-                    else
-                    {
-                        System.Diagnostics.Debug.WriteLine("User isn't online " + did);
-                        UserManager.Print();
-                    }
-                }
-                else
-                {
-                    System.Diagnostics.Debug.WriteLine("Got " + connection.Count + " connections for this inbox id. Something's wrong.");
-                }
-
+                _messageQueue.enqueue(e.InboxId, item);
             });
             return Task.CompletedTask;
         }

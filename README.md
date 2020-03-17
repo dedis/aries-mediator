@@ -45,8 +45,15 @@ $ cp libsodium.23.dylib libsodium.18.dylib
 # Caution
 
 This repository is meant only for demonstration and is nowhere
-near production ready. There are hacks in UserManager.cs for
-instance. User state should be managed in a more robust way.
+near production ready. The current implementation maintains
+in-memory queues for each identity it has to route messages for
+and attaches subscribers to it when the corresponding identity
+connects.
+
+A more robust way for instance, would be to persist the in-memory
+queues to be more resilient to failures and partitioning
+based on identity ids.
+
 
 # License
 
