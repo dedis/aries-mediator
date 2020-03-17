@@ -44,14 +44,14 @@ namespace MediatorAgent
         public async Task AuthorizeResponse(string message)
         {
             System.Diagnostics.Debug.WriteLine("Received AuthorizeResponse");
-            await _hubMethods.handleAuthorizeResponse(message, Context.ConnectionId);
+            await _hubMethods.HandleAuthorizeResponse(message, Context.ConnectionId);
             System.Diagnostics.Debug.WriteLine("Processed AuthorizeResponse");
         }
 
         public async Task Acknowledge(string message)
         {
             System.Diagnostics.Debug.WriteLine("Received Acknowledgement");
-            await _hubMethods.handleAcknowledge(message);
+            await _hubMethods.HandleAcknowledge(message);
             System.Diagnostics.Debug.WriteLine("Processed Acknowledgement");
         }
 
