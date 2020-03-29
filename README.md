@@ -18,6 +18,8 @@ wallet *does not exist* before running it for the first time.
 
 Then you can run it like this: `dotnet run --project MediatorAgent`.
 
+Instructions to integrate it with an edge-agent can be found [here](Usage.md).
+
 # Dependencies
 
 You will need to have libindy v1.14.2 available for dynamic linking.
