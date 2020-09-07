@@ -50,6 +50,7 @@ namespace MediatorAgent
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseForwardedHeaders();
             app.UseRouting();
             app.UseAriesFramework();
             app.UseMediatorDiscovery();

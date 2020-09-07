@@ -13,10 +13,10 @@
     <Folder Include="Message\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\aries-framework-dotnet\src\Hyperledger.Aries\Hyperledger.Aries.csproj">
+    <ProjectReference Include="..\..\aries-framework-dotnet\src\Hyperledger.Aries\Hyperledger.Aries.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\aries-framework-dotnet\src\Hyperledger.Aries.AspNetCore\Hyperledger.Aries.AspNetCore.csproj">
+    <ProjectReference Include="..\..\aries-framework-dotnet\src\Hyperledger.Aries.AspNetCore\Hyperledger.Aries.AspNetCore.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
   </ItemGroup>

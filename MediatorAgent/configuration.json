@@ -1,4 +1,4 @@
 ﻿{
-  "agentPublicEndpoint": "",
-  "walletPath": "/tmp/.indy_wallet"
+  "agentPublicEndpoint": "https://mediator.twins-project.org",
+  "walletPath": "/home/dedis/.indy_wallet"
 }

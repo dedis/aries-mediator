@@ -47,6 +47,7 @@ namespace MediatorAgent
                 var edgeWallet = await _walletService.GetWalletAsync(record.WalletConfiguration, record.WalletCredentials);
 
                 var item = await _walletRecordService.GetAsync<InboxItemRecord>(edgeWallet, e.ItemId);
+		System.Diagnostics.Debug.WriteLine("Got an item for inboxId" + e.InboxId);
                 _messageQueue.enqueue(e.InboxId, item);
             });
             return Task.CompletedTask;
