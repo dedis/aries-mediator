@@ -57,7 +57,7 @@ namespace MediatorAgent
                 var disposable = observable.SubscribeOn(TaskPoolScheduler.Default)
                     .Select(item => Observable.Defer(() =>
                     {
-			System.Diagnostics.Debug.WriteLine("Sending HandleMessage to" + connectionId + "for event in inbox " + inboxId);
+			            System.Diagnostics.Debug.WriteLine("Sending HandleMessage to" + connectionId + "for event in inbox " + inboxId);
                         return _hubContext.Clients.Client(connectionId)
                         .SendAsync("HandleMessage", item.ItemData, item.Id)
                         .ToObservable();
