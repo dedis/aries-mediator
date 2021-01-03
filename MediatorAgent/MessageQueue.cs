@@ -46,9 +46,19 @@ namespace MediatorAgent
 
         public void enqueue(string inboxId, T message)
         {
-            var collection = queue.GetOrAdd(inboxId, new Subject<T>());
+	    Subject<T> collection;
+	    foreach(var key in queue.Keys) {
+                System.Diagnostics.Debug.WriteLine("Established connections with " + key);
+            }
+            System.Diagnostics.Debug.WriteLine("Trying to find " + inboxId);
+            var ok = queue.TryGetValue(inboxId, out collection);
+            if (!ok)
+            {
+                System.Diagnostics.Debug.Print("Subject not present!!");
+		return;
+            }
             collection.OnNext(message);
-	        System.Diagnostics.Debug.WriteLine("Enqued message to the queue for inbox: " + inboxId);
+	    System.Diagnostics.Debug.WriteLine("Enqued message to the queue for inbox: " + inboxId);
         }
     }
 }

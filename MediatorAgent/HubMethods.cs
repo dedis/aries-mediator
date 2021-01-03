@@ -54,21 +54,37 @@ namespace MediatorAgent
                 var inboxId = connection.GetTag("InboxId");
                 var observable = _messageQueue.GetObservableForInbox(inboxId);
                 System.Diagnostics.Debug.WriteLine("Got observable for connectionId " + connectionId);
-                var disposable = observable.SubscribeOn(TaskPoolScheduler.Default)
-                    .Select(item => Observable.Defer(() =>
-                    {
-			            System.Diagnostics.Debug.WriteLine("Sending HandleMessage to" + connectionId + "for event in inbox " + inboxId);
-                        return _hubContext.Clients.Client(connectionId)
-                        .SendAsync("HandleMessage", item.ItemData, item.Id)
-                        .ToObservable();
-                    }))
+		var disposable = observable.SubscribeOn(TaskPoolScheduler.Default).ObserveOn(ThreadPoolScheduler.Instance)
+                    .Select(item => {
+                        System.Diagnostics.Debug.WriteLine("Got an item from the queue... Processing");
+                        return Observable.FromAsync(async () =>
+                        {
+                            System.Diagnostics.Debug.WriteLine("Sending HandleMessage to" + connectionId + "for event in inbox " + inboxId);
+                            await _hubContext.Clients.Client(connectionId)
+                            .SendAsync("HandleMessage", item.ItemData, item.Id)
+                            .ToObservable();
+			    var agentContext = await _agentProvider.GetContextAsync();
+			    var inboxRecord = await _walletRecordService.GetAsync<InboxRecord>(agentContext.Wallet, inboxId);
+			    var edgeWallet = await _walletService.GetWalletAsync(inboxRecord.WalletConfiguration, inboxRecord.WalletCredentials);
+			    try
+			    {
+				await _walletRecordService.DeleteAsync<InboxItemRecord>(edgeWallet, item.Id);
+			    }
+			    catch (Exception)
+			    {
+				Console.WriteLine("Couldn't delete inbox item with id: {0}", item.Id);
+			    }
+                        });
+                    })
                     .Concat()
-                    .Subscribe();
+                    .Subscribe(_ => { System.Diagnostics.Debug.WriteLine("Processed"); }, e => { System.Diagnostics.Debug.WriteLine("Error" + e.Data); });
                 _hubConnectionSubscriberManager.AssociateDisposable(connectionId, disposable);
             }
         }
 
         // An ack would remove the item-record from the wallet 
+	// TODO: Remove this since HandleMessage removes the message automatically after
+	// successfull delivery
         public async Task HandleAcknowledge(string message)
         {
             var agentContext = await _agentProvider.GetContextAsync();
